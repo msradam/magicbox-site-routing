@@ -6,6 +6,7 @@ from csv_utils import *
 from nn_utils import *
 from functools import reduce
 from collections import defaultdict
+from tqdm import tqdm
 
 import pickle, sys, os
 import igraph as ig
@@ -34,7 +35,8 @@ def routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[]):
     straight_line_dists = [ix_and_dist[0][1] for ix_and_dist in nn_indices_and_dists] 
     # Retrieve the indices and straight line distances of nearest neighbors
     nearest_tgt_indices = [[id[0] for id in ix_and_dist] for ix_and_dist in nn_indices_and_dists]
- 
+    for i in tqdm(range(len(nn_indices_and_dists))):
+        pass
     print("Done. Determining nearest road points to given sites ... ")
     src_nodes_with_distances  = get_nearest_nodes_ig(rG, src_points)
     tgt_nodes_with_distances  = get_nearest_nodes_ig(rG, tgt_points)
@@ -91,7 +93,7 @@ def routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[]):
 
     print("Initializing routed distance computation on source sites ... ") 
     pool = mp.Pool(processes=num_cores)
-    routed_dists = list(pool.map(dist_to_nearest_tgt, range(len(src_nodes_with_distances))))
+    routed_dists = list(pool.map(dist_to_nearest_tgt, tqdm(range(len(src_nodes_with_distances))) ))
     # routed_dists = [dist_to_nearest_tgt(src_nodes_with_distances[i],i) for i in range(len(src_nodes_with_distances)))]
     routed_dist_data = [ (straight_line_dists[i], routed_dists[i][0], ) for i in range(len(src_points)) ]
 
@@ -109,9 +111,8 @@ def main():
     tgt_path = func_args[1]
     g_path = func_args[2]
     out_path = func_args[3]
-    tgt_properties = func_args[4:]
-
-    updated_filename = os.path.splitext(src_path)[0].split('/')[1]
+    out_file = func_args[4]
+    tgt_properties = func_args[5:]
 
     try:
         tgt_name = tgt_path.split('_')[2].split('.')[0]
@@ -129,17 +130,22 @@ def main():
 
     print("Retrieving roads iGraph from " + g_path + " ... ")
     rG = pickle.load( open(g_path, 'rb') )
+    for i in tqdm(range(rG.vcount())):
+        pass
     print("Done. Retrieved roads graph with {0} edges and {1} vertices.".format(rG.ecount(), rG.vcount()))
+    
 
     print("Retrieving latitude longitude points from {0} and {1} ...".format(src_path, tgt_path))
     src_points = [tagged_point[0] for tagged_point in getTaggedPoints(src_path)] 
     tgt_tagged_points = getTaggedPoints(tgt_path, tgt_properties)
+     for i in tqdm(len(src_points)):
+        pass
     print("Done. Retrieved {0} source coordinates and {1} target coordinates.".format(len(src_points), len(tgt_tagged_points)))
 
     routed_dist_data = routed_distance(src_points, tgt_tagged_points, rG, tgt_properties)
-    makeUpdatedCsv(routed_dist_data, col_names, src_path, out_path + "/" + updated_filename +  '_updated_routed_dist.csv')
+    makeUpdatedCsv(routed_dist_data, col_names, src_path, out_path + "/" + out_file  +  '_updated_routed_dist.csv')
 
-    print("Done. Updated file is located at " + out_path + "/" + updated_filename +  '_updated_routed_dist.csv')
+    print("Done. Updated file is located at " + out_path + "/" + out_file +  '_updated_routed_dist.csv')
 
 if __name__ == "__main__":
     main()

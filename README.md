@@ -22,13 +22,13 @@ For example, a nearby emergency center may be closer on foot, but it may be safe
 ## Usage with file paths 
  For both routed distance using road network graphs and straight-line distances:
  ```
- python site_routing.py <path to .csv of source sites> <path to .csv of target sites> <path to pickled iGraph> <name of output directory> <target site properties>
+ python site_routing.py <path to .csv of source sites> <path to .csv of target sites> <path to pickled iGraph> <name of output directory> <name of output file> <target site properties>
  ```
  This will output an updated copy of the source sites .csv, with new columns named "Routed distance to <target type>" and "Straight line distance to <target type>", as well as additional columns based on specified additional properties. The properties must be passed as additional separate arguments, and must match the columns of the target .csv.
 
  For straight-line distances only:
  ```
- python straight_line_dist.py <path to .csv of source sites> <path to .csv of target sites> <name of output directory> <target site properties>
+ python straight_line_dist.py <path to .csv of source sites> <path to .csv of target sites> <name of output directory> <name of output file> <target site properties>
  ```
  This will output an updated copy of the source sites .csv, with a new column named 'Straight line distance to <target type>', as well as additional columns based on specified additional properties. The properties must be passed as additional separate arguments, and must match the columns of the target .csv.
 
@@ -38,7 +38,7 @@ For example, a nearby emergency center may be closer on foot, but it may be safe
 
  ### Example:
  ```
- python site_routing.py sle_schools.csv sle_healthsites.csv sle_roads_igraph.p type services
+ python site_routing.py sle_schools.csv sle_healthsites.csv sle_roads_igraph.p output_data sle_schools type services
  ```
 
  Outputs "sle_schools_updated_routed_dist.csv" with new columns ""

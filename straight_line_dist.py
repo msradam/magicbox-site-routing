@@ -43,7 +43,8 @@ def main():
     src_path = func_args[0]
     tgt_path = func_args[1]
     out_path = func_args[2]
-    tgt_properties = func_args[3:]
+    out_file = func_args[3]
+    tgt_properties = func_args[4:]
 
     updated_filename = os.path.splitext(src_path)[0].split('/')[1]
 
@@ -68,10 +69,10 @@ def main():
 
     straight_line_dist_data = straight_line_distance(src_points, tgt_tagged_points, tgt_properties)
 
-    if not os.path.exists(outpath):
-        os.makedirs(outpath)
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
 
-    makeUpdatedCsv(straight_line_dist_data, col_names, src_path, outpath + "/" + updated_filename + '_updated_straight_line_dist.csv')
+    makeUpdatedCsv(straight_line_dist_data, col_names, src_path, out_path + "/" + out_file + '_updated_straight_line_dist.csv')
 
 if __name__ == "__main__":
     main()
