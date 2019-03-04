@@ -5,11 +5,11 @@
 from csv_utils import *
 from nn_utils import *
 from functools import reduce
-from concurrent.futures import ProcessPoolExecutor
 from collections import defaultdict
 
 import pickle, sys, os
 import igraph as ig
+import multiprocessing as mp
 
 def routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[]):
     """
@@ -25,6 +25,8 @@ def routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[]):
      <additional properties of target site specified by tgt_properties>)
 
     """
+    num_cores = mp.cpu_count()
+
     tgt_points = [tagged_point[0] for tagged_point in tgt_tagged_points]
     # Determine the nearest health site through balltree nearest neighbors
     print("Determining smallest straight line distances between sites ... ")
@@ -42,11 +44,10 @@ def routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[]):
     # to avoid re-computation
     edge_dist_table = defaultdict(dict)    
 
-    def dist_to_nearest_tgt(dist_and_node, i):
+    def dist_to_nearest_tgt(i):
         '''
-        Given a tuple (distance to nearest node, node ID) and the index
-        of the source node we are currently on,  
-        computes distance to nearest target site in 
+        Given the index of the source node we are currently on, 
+        computes distance to nearest target site to that node
         '''
         def epath_to_dist(epath):
             """
@@ -63,6 +64,7 @@ def routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[]):
             return (straight_line_dists[i], nearest_tgt_indices[i][0])
 
         else: 
+            dist_and_node = src_nodes_with_distances[i]
             src_node, dist_to_src = dist_and_node[0], dist_and_node[1]
 
             dists = []
@@ -88,9 +90,9 @@ def routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[]):
             return min(dists, key = lambda t: t[0])
 
     print("Initializing routed distance computation on source sites ... ") 
-
-    routed_dists = [dist_to_nearest_tgt(src_nodes_with_distances[i],i) for i in range(len(src_nodes_with_distances))]
-    
+    pool = mp.Pool(processes=num_cores)
+    routed_dists = list(pool.map(dist_to_nearest_tgt, range(len(src_nodes_with_distances))))
+    # routed_dists = [dist_to_nearest_tgt(src_nodes_with_distances[i],i) for i in range(len(src_nodes_with_distances)))]
     routed_dist_data = [ (straight_line_dists[i], routed_dists[i][0], ) for i in range(len(src_points)) ]
 
     for i in range(len(routed_dists)):
@@ -135,9 +137,9 @@ def main():
     print("Done. Retrieved {0} source coordinates and {1} target coordinates.".format(len(src_points), len(tgt_tagged_points)))
 
     routed_dist_data = routed_distance(src_points, tgt_tagged_points, rG, tgt_properties)
-    makeUpdatedCsv(routed_dist_data, col_names, src_path, outpath + "/" + updated_filename +  '_updated_routed_dist.csv')
+    makeUpdatedCsv(routed_dist_data, col_names, src_path, out_path + "/" + updated_filename +  '_updated_routed_dist.csv')
 
-    print("Done. Updated file is located at " + outpath + "/" + updated_filename +  '_updated_routed_dist.csv')
+    print("Done. Updated file is located at " + out_path + "/" + updated_filename +  '_updated_routed_dist.csv')
 
 if __name__ == "__main__":
     main()
