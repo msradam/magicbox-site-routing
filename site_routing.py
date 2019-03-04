@@ -138,7 +138,7 @@ def main():
     print("Retrieving latitude longitude points from {0} and {1} ...".format(src_path, tgt_path))
     src_points = [tagged_point[0] for tagged_point in getTaggedPoints(src_path)] 
     tgt_tagged_points = getTaggedPoints(tgt_path, tgt_properties)
-     for i in tqdm(len(src_points)):
+    for i in tqdm(len(src_points)):
         pass
     print("Done. Retrieved {0} source coordinates and {1} target coordinates.".format(len(src_points), len(tgt_tagged_points)))
 
