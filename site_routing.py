@@ -9,7 +9,7 @@ from collections import defaultdict
 
 import pickle, sys, os
 import igraph as ig
-import multiprocessing as mp
+import pathos.multiprocessing as mp
 
 def routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[]):
     """
