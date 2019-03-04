@@ -87,8 +87,6 @@ def routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[]):
 
                     dists.append( (dist_to_src + dist + node_dist_to_tgt, current_index) )
 
-            if (i % 100 == 0): print("Completed nearest site calculation for {0} source sites!".format(i))
-
             return min(dists, key = lambda t: t[0])
 
     print("Initializing routed distance computation on source sites ... ") 
@@ -138,7 +136,7 @@ def main():
     print("Retrieving latitude longitude points from {0} and {1} ...".format(src_path, tgt_path))
     src_points = [tagged_point[0] for tagged_point in getTaggedPoints(src_path)] 
     tgt_tagged_points = getTaggedPoints(tgt_path, tgt_properties)
-    for i in tqdm(len(src_points)):
+    for i in tqdm(range(len(src_points) + len(tgt_tagged_points))):
         pass
     print("Done. Retrieved {0} source coordinates and {1} target coordinates.".format(len(src_points), len(tgt_tagged_points)))
 
