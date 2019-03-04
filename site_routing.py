@@ -54,7 +54,7 @@ def routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[]):
             Given a path of edge ID's, returns the distance traversed
             """
             if epath == []:
-                return float(inf)
+                return float('inf')
             else:
                 return reduce(lambda d1, d2: d1 + d2, list(map(lambda e: rG.es[e]['length'], epath)))
 
