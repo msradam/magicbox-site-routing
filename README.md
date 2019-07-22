@@ -49,7 +49,9 @@ For example, a nearby emergency center may be closer on foot, but it may be safe
  from site_routing import routed_distance
  ```
  Function: routed_distance(src_points, tgt_tagged_points, rG, tgt_properties=[])
+ 
  Input: A list of source coordinates, a list of tagged target coordinates, an iGraph object, a list of target properties
+ 
  Output: routed_dist_data - A list of tuples, where for src_points[i], routed_dist_data[i] is a tuple of the form:
     (straight line distance to nearest target site, 
      routed distance to nearest target site,
@@ -62,7 +64,9 @@ For example, a nearby emergency center may be closer on foot, but it may be safe
  from straight_line_dist import straight_line_distance
  ```
  Function: straight_line_distance(src_points, tgt_tagged_points, tgt_properties=[])
+ 
  Input: A list of source coordinates, a list of tagged target coordinates a list of target properties
+ 
  Output: straight_line_dist_data - A list of tuples, where for src_points[i], straight_line_dist_data[i] is a tuple of the form:
     (straight line distance to nearest target site, 
      target site identifier,
